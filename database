@@ -1,0 +1,190 @@
+create table products225 (
+	proid serial primary key,
+	name varchar(100),
+	price bigint,
+	hsncode varchar(10),
+	imgpath varchar(1000),
+	catid int
+)
+DROP TABLE IF EXISTS products225 CASCADE;
+create table customers225(
+	custid serial primary key,
+	name varchar(100),
+	contact bigint,
+	cdate date,
+	location bigint
+)
+
+
+create table hsncodes225(
+	hsncode varchar(10) primary key,
+	gst decimal
+);
+
+create table orders225(
+	orderid serial primary key,
+	order_date date,
+	price bigint,
+	custid int 
+)
+
+create table categories225(
+	catid serial primary key,
+	catname varchar(100) unique not null
+)
+
+
+create table orderproducts225(
+	orderid int,
+	prodid int,
+	quantity int,
+	price bigint
+)
+
+
+
+alter table products225
+add constraint fk_catid foreign key(catid) references categories225(catid)
+
+
+alter table products225
+add constraint fk_hsncode foreign key(hsncode) references hsncodes225(hsncode)
+
+
+alter table orders225
+add constraint fk_custid foreign key(custid) references customers225(custid )
+
+
+alter table orderproducts225
+add constraint fk_orderid foreign key(orderid) references orders225(orderid  )
+
+
+alter table orderproducts225
+add constraint fk_proid foreign key(prodid) references products225(proid)
+
+
+
+alter table orderproducts225
+add constraint fk_orderproductss primary key(orderid , prodid)
+
+
+INSERT INTO categories225 (catname) VALUES
+('SmartPhones'),
+('Clothing'),
+('Home Appliances'),
+('Books'),
+('Beauty and Personal Care'),
+('Sports and Outdoors'),
+('Electronics'),
+('Furniture'),
+('Toys and Games'),
+('Health and Wellness');
+
+
+INSERT INTO hsncodes225 (hsncode, gst) VALUES
+('8517', 18),
+('9401', 12),
+('3304', 28),
+('4202', 18),
+('6204', 12),
+('8536', 28),
+('3401', 18),
+('9018', 12),
+('9403', 18),
+('3307', 28),
+('6302', 12),
+('8528', 18),
+('6105', 28),
+('8519', 12),
+('9013', 18),
+('9405', 28),
+('9503', 12),
+('8481', 18),
+('8418', 28),
+('8525', 12);
+
+products225
+INSERT INTO products225 (name, price, hsncode, imgpath, catid) VALUES
+
+('PocoX3', 35000, '8517', 'arrivals1.png', 1),
+('Lakme facewash', 300, '3304', 'beauty2.png', 5),
+('The Last of the Moon Girls', 730, '6302', 'book2.png', 4),
+('Nothing Phone 2a', 23000, '8517', 'arrivals2.png', 1),
+('Tresme shampoo', 800, '3304', 'beauty1.png', 5),
+('Nothing Phone 2', 46000, '8517', 'arrivals3.png', 1),
+('Speakers', 17000, '8418', 'ha2.png', 3),
+('Cargo Pants', 4300, '8481', 'cloth2.png', 2),
+('iphone 14', 100000, '8517', 'arrivals4.png', 1),
+('Sweat Shirt', 3700, '8481', 'cloth1.png', 2),
+('iqoo z3 5g', 17000, '8517', 'arrivals5.png', 1),
+('Youngs Shuttle', 7000, '9013', 'sport2.png', 6),
+('iqoo 7 legend', 35000, '8517', 'arrivals6.png', 1),
+('MRF Bat', 5000, '9013', 'sport1.png', 6),
+('The Place Of Wonder', 1300, '6302', 'book1.png', 4),
+('vivo v20', 36000, '8517', 'arrivals7.png', 1),
+('TV', 39000, '8418', 'ha1.png', 3),
+('Realme xr', 33000, '8517', 'arrivals8.png', 1);
+
+
+
+
+
+
+
+
+
+
+create or replace function getAllProd()
+returns table(
+	proid int,
+	name varchar(100),
+	price bigint,
+	hsncode varchar(10),
+	imgpath varchar(1000),
+	catid int
+)
+as $$ 
+begin
+return query select * from products225;
+end; 
+$$ language plpgsql
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION getAllCategories()
+RETURNS TABLE(
+    catid int,
+    catname varchar(100)
+)
+AS $$ 
+BEGIN
+    RETURN QUERY SELECT * from categories225 order by catname asc  ;
+END; 
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION getProdByCat(IN id int)
+RETURNS TABLE(
+    proid int,
+	name varchar(100),
+	price bigint,
+	hsncode varchar(10),
+	imgpath varchar(1000),
+	catid int
+)
+AS $$ 
+BEGIN
+    RETURN QUERY SELECT * from products225 p  where p.catid=id ;
+END; 
+$$ LANGUAGE plpgsql;
+
+
